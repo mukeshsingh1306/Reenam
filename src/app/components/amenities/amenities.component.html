@@ -1,0 +1,16 @@
+<div class="amenities-section">
+  <div class="amenities-header">
+    <h2>Hotel Amenities</h2>
+    <p>Discover the exceptional facilities and services we offer</p>
+  </div>
+
+  <div class="amenities-grid">
+    <div *ngFor="let amenity of amenitiesList" class="amenity-card">
+      <div class="amenity-icon">
+        <mat-icon>{{ amenity.icon }}</mat-icon>
+      </div>
+      <h3>{{ amenity.title }}</h3>
+      <p>{{ amenity.description }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,208 @@
+<div class="booking-engine-container">
+  <!-- Step 1: Search -->
+  <div *ngIf="currentStep === 'search'" class="search-panel">
+    <div class="search-card">
+      <h2>Find Your Perfect Room</h2>
+      
+      <div class="search-form">
+        <div class="form-group">
+          <label>Check-in Date</label>
+          <input 
+            type="date" 
+            [(ngModel)]="bookingData.checkInDate"
+            [min]="minDate | date:'yyyy-MM-dd'"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Check-out Date</label>
+          <input 
+            type="date" 
+            [(ngModel)]="bookingData.checkOutDate"
+            [min]="bookingData.checkInDate | date:'yyyy-MM-dd'"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Number of Guests</label>
+          <select [(ngModel)]="bookingData.numberOfGuests" class="form-control">
+            <option value="1">1 Guest</option>
+            <option value="2">2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="5">5+ Guests</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Number of Rooms</label>
+          <select [(ngModel)]="bookingData.numberOfRooms" class="form-control">
+            <option value="1">1 Room</option>
+            <option value="2">2 Rooms</option>
+            <option value="3">3 Rooms</option>
+            <option value="4">4 Rooms</option>
+            <option value="5">5+ Rooms</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-search" (click)="searchAvailability()">
+        <mat-icon>search</mat-icon>
+        Search Available Rooms
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Room Selection -->
+  <div *ngIf="currentStep === 'select'" class="rooms-panel">
+    <div class="rooms-header">
+      <h2>Available Rooms</h2>
+      <p>{{ getNightsCount() }} night(s) • {{ bookingData.numberOfGuests }} guest(s)</p>
+      <button class="btn-back" (click)="backToSearch()">
+        <mat-icon>arrow_back</mat-icon> Back to Search
+      </button>
+    </div>
+
+    <div class="rooms-grid">
+      <div *ngFor="let room of filteredRooms" class="room-card" (click)="selectRoom(room)">
+        <div class="room-image">
+          <img [src]="room.image" [alt]="room.name" onerror="this.src='assets/placeholder.jpg'">
+        </div>
+        <div class="room-details">
+          <h3>{{ room.name }}</h3>
+          <p class="room-type">{{ room.type | uppercase }}</p>
+          <p class="room-description">{{ room.description }}</p>
+          
+          <div class="amenities">
+            <span *ngFor="let amenity of room.amenities" class="amenity-tag">
+              {{ amenity }}
+            </span>
+          </div>
+
+          <div class="room-footer">
+            <div class="price-info">
+              <span class="price">${{ room.price }}<small>/night</small></span>
+              <span class="total">Total: ${{ room.price * getNightsCount() * bookingData.numberOfRooms }}</span>
+            </div>
+            <button class="btn-select">Select Room</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Guest Information -->
+  <div *ngIf="currentStep === 'guest-info'" class="guest-info-panel">
+    <div class="guest-card">
+      <button class="btn-back" (click)="backToSelect()">
+        <mat-icon>arrow_back</mat-icon> Back to Rooms
+      </button>
+
+      <h2>Guest Information</h2>
+
+      <div class="selected-room-summary">
+        <h3>Selected: {{ selectedRoom?.name }}</h3>
+        <p>{{ getNightsCount() }} night(s) - ${{ calculateTotalPrice() }}</p>
+      </div>
+
+      <form class="guest-form">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="bookingData.guestName" 
+            name="guestName"
+            placeholder="Enter your full name"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input 
+            type="email" 
+            [(ngModel)]="bookingData.email" 
+            name="email"
+            placeholder="Enter your email"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input 
+            type="tel" 
+            [(ngModel)]="bookingData.phone" 
+            name="phone"
+            placeholder="Enter your phone number"
+            class="form-control">
+        </div>
+
+        <button type="button" class="btn-proceed" (click)="proceedToBooking()">
+          Proceed to Confirmation
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Step 4: Confirmation -->
+  <div *ngIf="currentStep === 'confirmation'" class="confirmation-panel">
+    <div class="confirmation-card">
+      <h2>Booking Confirmation</h2>
+
+      <div class="booking-summary">
+        <div class="summary-section">
+          <h3>Room Details</h3>
+          <p><strong>Room:</strong> {{ selectedRoom?.name }}</p>
+          <p><strong>Type:</strong> {{ selectedRoom?.type | uppercase }}</p>
+        </div>
+
+        <div class="summary-section">
+          <h3>Stay Details</h3>
+          <p><strong>Check-in:</strong> {{ bookingData.checkInDate | date:'short' }}</p>
+          <p><strong>Check-out:</strong> {{ bookingData.checkOutDate | date:'short' }}</p>
+          <p><strong>Number of Nights:</strong> {{ getNightsCount() }}</p>
+          <p><strong>Guests:</strong> {{ bookingData.numberOfGuests }}</p>
+          <p><strong>Rooms:</strong> {{ bookingData.numberOfRooms }}</p>
+        </div>
+
+        <div class="summary-section">
+          <h3>Guest Information</h3>
+          <p><strong>Name:</strong> {{ bookingData.guestName }}</p>
+          <p><strong>Email:</strong> {{ bookingData.email }}</p>
+          <p><strong>Phone:</strong> {{ bookingData.phone }}</p>
+        </div>
+
+        <div class="summary-section price-summary">
+          <h3>Price Breakdown</h3>
+          <p><strong>Price per night:</strong> ${{ selectedRoom?.price }}</p>
+          <p><strong>Number of nights:</strong> {{ getNightsCount() }}</p>
+          <p><strong>Number of rooms:</strong> {{ bookingData.numberOfRooms }}</p>
+          <div class="total-price">
+            <strong>Total Amount:</strong> ${{ calculateTotalPrice() }}
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-actions">
+        <button class="btn-cancel" (click)="backToSelect()">
+          Back to Select Room
+        </button>
+        <button 
+          class="btn-confirm" 
+          (click)="confirmBooking()"
+          [disabled]="bookingInProgress">
+          {{ bookingInProgress ? 'Processing...' : 'Confirm & Book' }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="createdBooking" class="success-message">
+      <mat-icon>check_circle</mat-icon>
+      <h3>Booking Confirmed!</h3>
+      <p>Confirmation ID: <strong>{{ createdBooking.id }}</strong></p>
+      <p>A confirmation email has been sent to {{ createdBooking.email }}</p>
+      <button class="btn-new-booking" (click)="resetBookingForm()">
+        Make Another Booking
+      </button>
+    </div>
+  </div>
+</div>

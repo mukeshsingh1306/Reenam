@@ -1,0 +1,22 @@
+<header class="header">
+  <div class="header-container">
+    <div class="logo">
+      <mat-icon class="logo-icon">home</mat-icon>
+      <h1>Reenam Hotel</h1>
+    </div>
+
+    <button class="menu-toggle" (click)="toggleMenu()">
+      <mat-icon>{{ menuOpen ? 'close' : 'menu' }}</mat-icon>
+    </button>
+
+    <nav class="nav" [class.open]="menuOpen">
+      <a (click)="scrollToSection('home')" class="nav-link">Home</a>
+      <a (click)="scrollToSection('booking-section')" class="nav-link">Book Now</a>
+      <a (click)="scrollToSection('amenities-section')" class="nav-link">Amenities</a>
+      <a (click)="scrollToSection('testimonials-section')" class="nav-link">Reviews</a>
+      <a href="tel:+1234567890" class="nav-link contact-link">
+        <mat-icon>phone</mat-icon> Contact
+      </a>
+    </nav>
+  </div>
+</header>

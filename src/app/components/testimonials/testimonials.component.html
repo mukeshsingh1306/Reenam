@@ -1,0 +1,24 @@
+<div class="testimonials-section">
+  <div class="testimonials-header">
+    <h2>Guest Reviews</h2>
+    <p>Read what our guests have to say about their stay</p>
+  </div>
+
+  <div class="testimonials-grid">
+    <div *ngFor="let testimonial of testimonials" class="testimonial-card">
+      <div class="testimonial-header">
+        <div>
+          <h3>{{ testimonial.name }}</h3>
+          <p class="room-type">{{ testimonial.roomType }}</p>
+        </div>
+        <div class="rating">
+          <mat-icon *ngFor="let _ of getStarArray(testimonial.rating)" class="star">star_rate</mat-icon>
+        </div>
+      </div>
+
+      <p class="testimonial-comment">"{{ testimonial.comment }}"</p>
+
+      <p class="testimonial-date">{{ testimonial.date }}</p>
+    </div>
+  </div>
+</div>
